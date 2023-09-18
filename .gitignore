@@ -19,3 +19,10 @@
 
 # Go workspace file
 go.work
+main
+bin
+.vscode
+.ckkey
+.ckrc
+./.envrc
+coverage.out

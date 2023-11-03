@@ -15,20 +15,16 @@ jobs:
           token: ${{ secrets.HOMEBREW_TOKEN }}
           path: homebrew-tap
 
-      - name: Create new branch
+      - name: Update the Homebrew tap repository
         run: |
           cd homebrew-tap
           git checkout -b update-${{ github.event.release.tag_name }}
-
-      - name: Run the update script
-        run: |
-          cd homebrew-tap
           ./update-homebrew.sh
-
-      - name: Push changes
-        run: |
-          cd homebrew-tap
-          git push origin update-${{ github.event.release.tag_name }}   
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git add .
+          git commit -m "Update homebrew formula to version ${{ github.event.release.tag_name }}"
+          git push origin update-${{ github.event.release.tag_name }}
 
       - name: Create pull request
         uses: peter-evans/create-pull-request@v3
@@ -38,4 +34,5 @@ jobs:
           title: 'New Homebrew Formula version'
           body: 'Updating version of homebrew formula'
           branch: update-${{ github.event.release.tag_name }}
+          commit-message: 'Update homebrew formula to version ${{ github.event.release.tag_name }}'
           base: 'main'

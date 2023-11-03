@@ -2,7 +2,8 @@ ROOT:=$(shell git rev-parse --show-toplevel)
 
 .PHONY: build
 build:
-	go build -o ./bin/cryptkeeper ./cmd/cryptkeeper/*.go 
+	@VERSION=$$(cat VERSION); \
+	go build -ldflags "-X github.com/sunny-b/cryptkeeper/internal/version.Version=v$${VERSION}" -o ./bin/cryptkeeper ./cmd/cryptkeeper/*.go 
 
 ############################################################################
 # Testing

@@ -12,13 +12,13 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var rootCmd = &cobra.Command{Use: "cryptkeeper"}
+
 func init() {
 	cobra.OnInitialize(initConfig)
 }
 
 func main() {
-	var rootCmd = &cobra.Command{Use: "cryptkeeper"}
-
 	rootCmd.AddCommand(commands.Init)
 	rootCmd.AddCommand(commands.Set)
 	rootCmd.AddCommand(commands.Remove)
@@ -28,6 +28,7 @@ func main() {
 	rootCmd.AddCommand(commands.Hook)
 	rootCmd.AddCommand(commands.Verify)
 	rootCmd.AddCommand(commands.Direnv)
+	rootCmd.AddCommand(commands.Version)
 
 	logLevelStr := os.Getenv("LOG_LEVEL")
 	if logLevelStr == "" {

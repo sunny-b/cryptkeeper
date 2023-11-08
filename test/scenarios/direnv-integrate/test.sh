@@ -13,7 +13,7 @@ test_empty "$CK_LAST"
 test_empty "$CK_REVERT"
 test_neq "$BAR" "baz"
 
-cryptkeeper init "${TARGET_SHELL}"
+cryptkeeper init "${TARGET_SHELL}" -s
 echo "export BAR=baz" > .envrc
 echo "eval \$(cryptkeeper export $TARGET_SHELL)" >> .envrc
 

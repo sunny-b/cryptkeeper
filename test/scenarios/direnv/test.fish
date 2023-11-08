@@ -11,7 +11,8 @@ test_empty "$CK_LAST"
 test_empty "$CK_REVERT"
 test_neq "$BAR" "baz"
 
-cryptkeeper init "$TARGET_SHELL" -d
+cryptkeeper init "$TARGET_SHELL"
+test_eq "direnv" (jq -r .mode < .ckrc)
 
 section "Testing direnv integration"
 

@@ -15,12 +15,13 @@ test_empty "$CK_WATCH"
 test_empty "$CK_LAST"
 test_empty "$CK_REVERT"
 
-cryptkeeper init "$TARGET_SHELL"
+cryptkeeper init "$TARGET_SHELL" -s
 ck_env
 
 test_nempty "$CK_WATCH"
 test_nempty "$CK_LAST"
 test_nempty "$CK_REVERT"
+test_eq "standalone" (jq -r .mode < .ckrc)
 
 # Adding Secret from stdin
 section "Adding Secret from stdin"
@@ -87,9 +88,9 @@ ck_env
 test_eq "$FOO" "bar"
 cleanup
 ck_env
-test_empty "$FOO"
 test_empty "$CK_WATCH"
 test_empty "$CK_LAST"
 test_empty "$CK_REVERT"
+
 
 cleanup

@@ -2,6 +2,7 @@ package commands
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -44,16 +45,19 @@ var Direnv = &cobra.Command{
 		}
 
 		if integrate {
-			exists, err := fileutils.TextExistsInFile(envrcPath, fmt.Sprintf("eval $(cryptkeeper export %s)", sh.Shell()))
+			if !direnv.IsInstalled() {
+				fmt.Println(`"direnv" is not installed. Install "direnv" and try again`)
+				os.Exit(1)
+			}
+
+			exists, err := fileutils.TextExistsInFile(envrcPath, fmt.Sprintf(`eval "$(cryptkeeper export %s)"`, sh.Shell()))
 			if err != nil || !exists {
-				fmt.Println("Please add the following to your .envrc file:\n\n" + direnv.EvalStatement(sh.Shell()))
+				fmt.Printf("Add the following to your .envrc file:\n\n%s\n\n", direnv.EvalStatement(sh.Shell()))
 			}
 
 			_ = direnv.Reload()
 
-			cfg.Direnv = &config.Direnv{
-				RCPath: envrcPath,
-			}
+			cfg.Mode = config.DirenvMode
 		} else {
 			return nil
 		}

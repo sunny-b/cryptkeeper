@@ -25,14 +25,3 @@ jobs:
           git add .
           git commit -m "Update homebrew formula to version ${{ github.event.release.tag_name }}"
           git push origin update-${{ github.event.release.tag_name }}
-
-      - name: Create pull request
-        uses: peter-evans/create-pull-request@v3
-        with:
-          token: ${{ secrets.HOMEBREW_TOKEN }}
-          path: 'homebrew-tap'
-          title: 'New Homebrew Formula version'
-          body: 'Updating version of homebrew formula'
-          branch: update-${{ github.event.release.tag_name }}
-          commit-message: 'Update homebrew formula to version ${{ github.event.release.tag_name }}'
-          base: 'main'

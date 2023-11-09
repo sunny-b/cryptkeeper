@@ -49,7 +49,7 @@ var Env = &cobra.Command{
 			fmt.Print(diffString)
 		}
 
-		if cfg.Direnv.Enabled() {
+		if cfg.Mode == config.DirenvMode {
 			// Don't run 'env' if direnv is enabled.
 			fmt.Print(sh.Unset(config.CKRevertEnvKey) + sh.Unset(config.CKLastEnvKey))
 			return

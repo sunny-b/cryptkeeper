@@ -54,7 +54,7 @@ var Set = &cobra.Command{
 
 		// Default to user passing in value if value isn't set.
 		if value == "" {
-			fmt.Print("Enter value (it won't be displayed): ")
+			fmt.Print("Enter value (it won't be displayed):\n")
 			byteValue, err := term.ReadPassword(int(os.Stdin.Fd()))
 			if err != nil {
 				return fmt.Errorf("error reading value: %w", err)
@@ -89,10 +89,7 @@ var Set = &cobra.Command{
 		}
 
 		if cfg.IsDirenvIntegrated() {
-			err = direnv.Reload()
-			if err != nil {
-				return err
-			}
+			return direnv.ReloadEnv()
 		}
 
 		return nil

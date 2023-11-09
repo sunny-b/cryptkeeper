@@ -11,7 +11,7 @@ test_empty "$CK_WATCH"
 test_empty "$CK_LAST"
 test_empty "$CK_REVERT"
 
-cryptkeeper init "$TARGET_SHELL" -e "$TARGET_ENCRYPTION"
+cryptkeeper init "$TARGET_SHELL" -e "$TARGET_ENCRYPTION" --standalone
 
 ck_env
 

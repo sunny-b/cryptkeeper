@@ -12,6 +12,8 @@ import (
 	"github.com/sunny-b/cryptkeeper/internal/fileutils"
 )
 
+type Mode string
+
 const (
 	envrc       = ".envrc"
 	fileName    = ".ckrc"
@@ -20,6 +22,9 @@ const (
 	CKWatchEnvKey  = "CK_WATCH"
 	CKRevertEnvKey = "CK_REVERT"
 	CKLastEnvKey   = "CK_LAST"
+
+	DirenvMode     Mode = "direnv"
+	StandaloneMode Mode = "standalone"
 )
 
 var (
@@ -35,7 +40,7 @@ var (
 
 //nolint:musttag
 type Config struct {
-	Direnv     *Direnv    `json:"direnv,omitempty"`
+	Mode       Mode       `json:"mode"`
 	Encryption Encryption `json:"encryption"`
 	Env        Env        `json:"env"`
 
@@ -44,11 +49,11 @@ type Config struct {
 
 func (c *Config) MarshalJSON() ([]byte, error) {
 	tmp := struct {
-		Direnv     *Direnv    `json:"direnv,omitempty"`
+		Mode       Mode       `json:"mode"`
 		Encryption Encryption `json:"encryption"`
 		Env        Env        `json:"env"`
 	}{
-		Direnv:     c.Direnv,
+		Mode:       c.Mode,
 		Encryption: c.Encryption,
 		Env:        c.Env,
 	}
@@ -123,7 +128,7 @@ func (e Env) CleanContext() {
 }
 
 func (c *Config) IsDirenvIntegrated() bool {
-	return c.Direnv.Enabled()
+	return c.Mode == DirenvMode
 }
 
 func FileName() string {

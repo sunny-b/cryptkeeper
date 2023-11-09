@@ -25,6 +25,11 @@ func Reload() error {
 	return exec.Command("direnv", "reload").Run()
 }
 
+func IsInstalled() bool {
+	_, err := exec.LookPath("direnv")
+	return err == nil
+}
+
 func Integrate(envrcPath, shell string) error {
 	cmd := evalStatement(shell)
 
@@ -58,4 +63,18 @@ func evalStatement(shell string) string {
 
 func EvalStatement(shell string) string {
 	return evalStatement(shell)
+}
+
+func ReloadEnv() error {
+	if !IsInstalled() {
+		logrus.Error("'direnv' is not installed - install it here: https://direnv.net/docs/installation.html")
+		return nil
+	}
+
+	if EnvrcPath() == "" {
+		logrus.Warn(".envrc not found - skipping reload")
+		return nil
+	}
+
+	return Reload()
 }

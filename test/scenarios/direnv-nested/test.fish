@@ -21,7 +21,7 @@ test_empty "$CK_WATCH"
 test_empty "$CK_LAST"
 test_empty "$CK_REVERT"
 
-cryptkeeper init "$TARGET_SHELL" -d
+cryptkeeper init "$TARGET_SHELL"
 reeval
 
 section "Adding Secret from stdin"
@@ -50,7 +50,7 @@ test_nempty "$DIRENV_FILE"
 
 section "Nesting cryptkeeper config"
 
-cryptkeeper init "$TARGET_SHELL" -d
+cryptkeeper init "$TARGET_SHELL"
 reeval
 test_eq "$FOO" "bar"
 

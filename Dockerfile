@@ -1,7 +1,7 @@
 FROM golang:latest
 
 RUN apt-get update && \
-    apt-get install -y bash zsh fish xclip direnv xvfb
+    apt-get install -y bash zsh fish xclip direnv xvfb jq
 
 # Create an entrypoint script
 RUN echo '#!/bin/bash\nXvfb :1 &\nexport DISPLAY=:1\nexec "$@"' > /entrypoint.sh && \

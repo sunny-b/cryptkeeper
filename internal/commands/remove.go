@@ -53,10 +53,7 @@ var Remove = &cobra.Command{
 		}
 
 		if cfg.IsDirenvIntegrated() {
-			err = direnv.Reload()
-			if err != nil {
-				return err
-			}
+			return direnv.ReloadEnv()
 		}
 
 		return nil

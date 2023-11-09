@@ -17,7 +17,7 @@ import (
 var (
 	encryption string
 	keyPath    string
-	withDirenv bool
+	standalone bool
 )
 
 var Init = &cobra.Command{
@@ -71,36 +71,35 @@ var Init = &cobra.Command{
 
 		var integrate bool
 		switch {
-		case withDirenv && len(envrcPath) > 0:
+		case standalone:
+			fmt.Println("Running in standalone mode. Skipping direnv integration.")
+		default:
 			integrate = true
-		case withDirenv:
-			fmt.Println("No .envrc file detected. Skipping direnv integration.")
-		case len(envrcPath) > 0:
-			output := promptUserf(".envrc file detected at %s. Would you like to integrate with direnv? [Y/n]: ", envrcPath)
-			if output == "y" || output == "yes" {
-				integrate = true
-			}
 		}
 
 		if integrate {
-			exists, err := fileutils.TextExistsInFile(envrcPath, fmt.Sprintf("eval $(cryptkeeper export %s)", sh.Shell()))
-			if err != nil || !exists {
-				fmt.Println("Please add the following to your .envrc file:\n\n" + direnv.EvalStatement(sh.Shell()))
+			if !direnv.IsInstalled() {
+				fmt.Println("direnv is not installed. Please install direnv before adding secrets.")
 			}
 
-			cfg.Direnv = &config.Direnv{
-				RCPath: envrcPath,
+			exists, err := fileutils.TextExistsInFile(envrcPath, fmt.Sprintf(`eval "$(cryptkeeper export %s)"`, sh.Shell()))
+			if err != nil || !exists {
+				fmt.Printf("Add this to your .envrc file:\n\n%s\n\n", direnv.EvalStatement(sh.Shell()))
 			}
+
+			cfg.Mode = config.DirenvMode
 		} else {
 			rcPath, err := fileutils.FindPathTo(sh.RCFile())
-			if err != nil || len(rcPath) == 0 {
-				fmt.Printf("Please add the following to your %s file:\n\neval \"$(cryptkeeper hook %s)\"\n", sh.RCFile(), sh.Shell())
+
+			var exists bool
+			if len(rcPath) > 0 {
+				exists, err = fileutils.TextExistsInFile(rcPath, fmt.Sprintf(`eval "$(cryptkeeper hook %s)"`, sh.Shell()))
+			}
+			if err != nil || !exists {
+				fmt.Printf("Add this to your %s file:\n\neval \"$(cryptkeeper hook %s)\"\n\n", sh.RCFile(), sh.Shell())
 			}
 
-			exists, err := fileutils.TextExistsInFile(rcPath, fmt.Sprintf(`eval "$(cryptkeeper hook %s)"`, sh.Shell()))
-			if err != nil || !exists {
-				fmt.Printf("Please add the following to your %s file:\n\neval \"$(cryptkeeper hook %s)\"\n", sh.RCFile(), sh.Shell())
-			}
+			cfg.Mode = config.StandaloneMode
 		}
 
 		err = config.Init(cfg)
@@ -116,8 +115,8 @@ var Init = &cobra.Command{
 
 func init() {
 	Init.Flags().StringVarP(&encryption, "encryption", "e", "aes256", "Type of encryption to use for encrypting/decrypting the secrets")
-	Init.Flags().StringVarP(&keyPath, "key-path", "k", config.KeyFileName(), "File path to output generated encryption key. ")
-	Init.Flags().BoolVarP(&withDirenv, "direnv", "d", false, "Integrate with direnv")
+	Init.Flags().StringVarP(&keyPath, "key-path", "k", config.KeyFileName(), "File path to output generated encryption key")
+	Init.Flags().BoolVarP(&standalone, "standalone", "s", false, "Run in standalone mode")
 }
 
 func promptUserf(prompt string, args ...any) string {

@@ -9,7 +9,7 @@ test_empty "$CK_WATCH"
 test_empty "$CK_LAST"
 test_empty "$CK_REVERT"
 
-cryptkeeper init "$TARGET_SHELL"
+cryptkeeper init "$TARGET_SHELL" -s
 
 ck_env
 
@@ -30,7 +30,7 @@ cd nest
 cleanup
 ck_env
 
-cryptkeeper init "$TARGET_SHELL"
+cryptkeeper init "$TARGET_SHELL" -s
 ck_env
 test_empty "$FOO"
 
